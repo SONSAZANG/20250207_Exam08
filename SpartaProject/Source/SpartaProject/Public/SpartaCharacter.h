@@ -27,6 +27,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "UI")
 	UWidgetComponent* OverheadWidget;
 
+
 	UFUNCTION(BlueprintPure, Category = "Health")
 	float GetHealth() const;
 
@@ -61,6 +62,7 @@ protected:
 
 	void OnDeath();
 	void UpdateOverheadHP();
+	void UpdateMainHUD();
 private:
 	float NormalSpeed;
 	float SprintSpeedMultiplier;

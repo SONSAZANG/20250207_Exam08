@@ -7,6 +7,7 @@
 #include "Components/WidgetComponent.h"
 #include "SpartaGameState.h"
 #include "Components/TextBlock.h"
+#include "Components/ProgressBar.h"
 
 ASpartaCharacter::ASpartaCharacter()
 {
@@ -38,7 +39,8 @@ ASpartaCharacter::ASpartaCharacter()
 void ASpartaCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	UpdateOverheadHP();
+	// UpdateOverheadHP();
+	UpdateMainHUD();
 }
 
 float ASpartaCharacter::GetHealth() const
@@ -49,7 +51,8 @@ float ASpartaCharacter::GetHealth() const
 void ASpartaCharacter::AddHealth(float Amount)
 {
 	Health = FMath::Clamp(Health + Amount, 0.0f, MaxHealth);
-	UpdateOverheadHP();
+	// UpdateOverheadHP();
+	UpdateMainHUD();
 }
 
 void ASpartaCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -123,7 +126,8 @@ float ASpartaCharacter::TakeDamage(
 	float ActualDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 
 	Health = FMath::Clamp(Health - DamageAmount, 0.0f, MaxHealth);
-	UpdateOverheadHP();
+	//UpdateOverheadHP();
+	UpdateMainHUD();
 
 	if (Health <= 0.0f)
 	{
@@ -211,6 +215,28 @@ void ASpartaCharacter::UpdateOverheadHP()
 	if (UTextBlock* HPText = Cast<UTextBlock>(OverheadWidgetInstnace->GetWidgetFromName(TEXT("OverHeadHP"))))
 	{
 		HPText->SetText(FText::FromString(FString::Printf(TEXT("%.0f / %.0f"), Health, MaxHealth)));
+	}
+}
+
+void ASpartaCharacter::UpdateMainHUD()
+{
+	if (APlayerController* PlayerController = GetWorld()->GetFirstPlayerController())
+	{
+		if (ASpartaPlayerController* SpartaPlayerController = Cast<ASpartaPlayerController>(PlayerController))
+		{
+			if (UUserWidget* HUDWidget = SpartaPlayerController->GetHUDWidget())
+			{
+				if (UTextBlock* HPText = Cast<UTextBlock>(HUDWidget->GetWidgetFromName(TEXT("HP"))))
+				{
+					HPText->SetText(FText::FromString(FString::Printf(TEXT("%.0f / %.0f"), Health, MaxHealth)));
+				}
+
+				if (UProgressBar* HPBar = Cast<UProgressBar>(HUDWidget->GetWidgetFromName(TEXT("HPBar"))))
+				{
+					HPBar->SetPercent(Health / MaxHealth);
+				}
+			}
+		}
 	}
 }
 

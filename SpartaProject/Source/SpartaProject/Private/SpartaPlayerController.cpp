@@ -19,7 +19,7 @@ ASpartaPlayerController::ASpartaPlayerController()
 {
 }
 
-UUserWidget* ASpartaPlayerController::GetHUDWdiget() const
+UUserWidget* ASpartaPlayerController::GetHUDWidget() const
 {
 	return HUDWidgetInstance;
 }
